@@ -28,7 +28,7 @@ id_cliente int not null,
 data date not null,
 desconto decimal(2,2),
 
-add constraint fk_clientes foreign key (id_cliente) references tb_clientes(id_ciente)
+constraint fk_clientes foreign key (id_cliente) references tb_clientes(id_ciente)
 )
 GO
 
@@ -47,7 +47,7 @@ create table tb_vendas_canceladas(
 id_vendas_canceladas int primary key IDENTITY(1,1),
 id_itens_vendidos int not null,
 
-add constraint fk_itens_vendidos foreign key (id_item_vendido) references tb_itens_vendidos(id_item_vendido)
+constraint fk_itens_vendidos foreign key (id_item_vendido) references tb_itens_vendidos(id_item_vendido)
 
 )
 GO
@@ -58,8 +58,8 @@ id_item_vendido int primary key IDENTITY(1,1),
 id_venda int not null,
 id_produto int not null,
 
-add constraint fk_produtos foreign key (id_produto) references tb_produtos(id_produto),
-add constraint fk_vendas foreign key (id_venda) references tb_vendas(id_venda)
+constraint fk_produtos foreign key (id_produto) references tb_produtos(id_produto),
+constraint fk_vendas foreign key (id_venda) references tb_vendas(id_venda)
 
 )
 GO
