@@ -1,9 +1,14 @@
 --atividade de relacionamentos entre tabelas
 --no sql server para BD III (etec)
 
+use master 
+go
+drop database db_mercado
+go
 create database db_mercado
+go
 use db_mercado
-GO
+go
 
 create table tb_clientes(
 id_cliente int PRIMARY KEY IDENTITY(1,1),
@@ -26,9 +31,9 @@ create table tb_vendas(
 id_venda int primary key IDENTITY(1,1),
 id_cliente int not null,
 data date not null,
-desconto decimal(2,2),
+desconto decimal(2,2)
 
-constraint fk_clientes foreign key (id_cliente) references tb_clientes(id_ciente)
+--constraint fk_clientes foreign key (id_cliente) references tb_clientes(id_ciente)
 )
 GO
 
@@ -45,9 +50,12 @@ GO
 
 create table tb_vendas_canceladas(
 id_vendas_canceladas int primary key IDENTITY(1,1),
-id_itens_vendidos int not null,
+id_item_vendido int UNIQUE not null
 
-constraint fk_itens_vendidos foreign key (id_item_vendido) references tb_itens_vendidos(id_item_vendido)
+--UNIQUE faz com que não seja possível remover 2x o mesmo item da tabela.
+--Se remover uma vez, não tem como 'remover' de novo.
+
+--constraint fk_itens_vendidos foreign key (id_item_vendido) references tb_itens_vendidos(id_item_vendido)
 
 )
 GO
@@ -56,10 +64,40 @@ GO
 create table tb_itens_vendidos(
 id_item_vendido int primary key IDENTITY(1,1),
 id_venda int not null,
-id_produto int not null,
+id_produto int not null
 
-constraint fk_produtos foreign key (id_produto) references tb_produtos(id_produto),
-constraint fk_vendas foreign key (id_venda) references tb_vendas(id_venda)
+--constraint fk_produtos foreign key (id_produto) references tb_produtos(id_produto),
+--constraint fk_vendas foreign key (id_venda) references tb_vendas(id_venda)
 
 )
 GO
+
+alter table tb_itens_vendidos
+	add CONSTRAINT fk_id_produto FOREIGN KEY (id_produto) REFERENCES tb_produtos(id_produto)
+	go
+	
+alter table tb_itens_vendidos
+	add CONSTRAINT fk_vendas FOREIGN KEY (id_venda) REFERENCES tb_vendas(id_venda)
+	go
+	
+alter table tb_vendas
+	add CONSTRAINT fk_clientes FOREIGN KEY (id_cliente) REFERENCES tb_clientes(id_cliente)
+	go
+	
+--alter table tb_clientes
+--	add CONSTRAINT fk_vendas FOREIGN KEY (id_venda) REFERENCES tb_vendas(id_venda)
+--	go
+	
+--alter table tb_vendas_canceladas
+	--add CONSTRAINT fk_itens_vendidos FOREIGN KEY (id_item_vendido) REFERENCES tb_itens_vendidos(id_item_vendido)
+	--go
+	
+	--//////////////////necessario arrumar aqui
+--alter table tb_vendas_canceladas
+	--add CONSTRAINT fk_vendas foreign key (id_venda) references tb_vendas(id_venda)
+	--go
+	
+	--//////////////////necessario arrumar aqui
+--alter table tb_vendas_canceladas
+--	add CONSTRAINT fk_vendas FOREIGN KEY (id_item_vendido) REFERENCES tb_itens_vendidos(id_item_vendido)
+--	go
