@@ -88,16 +88,13 @@ alter table tb_vendas
 --	add CONSTRAINT fk_vendas FOREIGN KEY (id_venda) REFERENCES tb_vendas(id_venda)
 --	go
 	
---alter table tb_vendas_canceladas
-	--add CONSTRAINT fk_itens_vendidos FOREIGN KEY (id_item_vendido) REFERENCES tb_itens_vendidos(id_item_vendido)
-	--go
 	
 	--//////////////////necessario arrumar aqui
 --alter table tb_vendas_canceladas
-	--add CONSTRAINT fk_vendas foreign key (id_venda) references tb_vendas(id_venda)
-	--go
-	
-	--//////////////////necessario arrumar aqui
---alter table tb_vendas_canceladas
---	add CONSTRAINT fk_vendas FOREIGN KEY (id_item_vendido) REFERENCES tb_itens_vendidos(id_item_vendido)
+--	add CONSTRAINT fk_vendas foreign key (id_venda) references tb_vendas(id_venda)
 --	go
+	
+	
+alter table tb_vendas_canceladas
+	add CONSTRAINT fk_id_item_vendido FOREIGN KEY (id_item_vendido) REFERENCES tb_itens_vendidos(id_item_vendido)
+	go
