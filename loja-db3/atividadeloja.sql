@@ -93,8 +93,31 @@ alter table tb_vendas
 --alter table tb_vendas_canceladas
 --	add CONSTRAINT fk_vendas foreign key (id_venda) references tb_vendas(id_venda)
 --	go
-	
+
+
 	
 alter table tb_vendas_canceladas
 	add CONSTRAINT fk_id_item_vendido FOREIGN KEY (id_item_vendido) REFERENCES tb_itens_vendidos(id_item_vendido)
 	go
+
+--Acrescentando código: 29/08/19
+--insere os seguintes dados na tabela clientes
+insert into tb_clientes(nome, endereco, idade, sexo)values(
+'Rogerio','Rua 593','28','M'
+)
+
+--apresenta todos os dados da tabela clientes
+select * from tb_clientes
+
+--inserindo dados na tabela vendas
+insert into tb_vendas(id_cliente, data, desconto)values(
+1,'10/10/2010','0.5'
+);
+
+--apresenta todos os dados da tabela vendas
+select * from tb_vendas;
+
+--///////////////////////////////////////Necessário arrumar abaixo. Inverti os nomes. O nome que você escolhe é depois do 'as', não 'antes'.
+--SELECT v.id as id_venda, c.nome as nome_cliente
+--FROM tb_vendas as v 
+--JOIN tb_clientes AS c ON v.id_venda = c.id_cliente
