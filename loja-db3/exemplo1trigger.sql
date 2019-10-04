@@ -19,11 +19,7 @@ create table tb_pessoas_com_data(
 	data_registro date
 )
 
-insert into tb_pessoas(nome_pessoa, sexo_pessoa)values(
-	'Rafael', 'M'
-)
 
-drop trigger tg_insert_pessoas_data
 
 create trigger tg_insert_pessoas_data on tb_pessoas
 for insert
@@ -33,11 +29,14 @@ declare @pessoasexo char(1);
 declare @pessoanome varchar(100);
 
 select @pessoaid = i.id_pessoa from inserted i;
-select @pessoasexo = i.nome_pessoa from inserted i;
-select @pessoanome = i.sexo_pessoa from inserted i;
+select @pessoanome = i.nome_pessoa from inserted i;
+select @pessoasexo = i.sexo_pessoa from inserted i;
 
-insert into tb_pessoas_com_data(id_pessoa, nome_pessoa, data_registro) values(@pessoaid, @pessoanome, GETDATE());
+insert into tb_pessoas_com_data(id_pessoa, nome_pessoa, sexo_pessoa, data_registro) values(@pessoaid, @pessoanome, @pessoasexo, GETDATE());
 
+insert into tb_pessoas(nome_pessoa, sexo_pessoa)values(
+	'Rafael', 'M'
+)
 
 select * from tb_pessoas
 select * from tb_pessoas_com_data
