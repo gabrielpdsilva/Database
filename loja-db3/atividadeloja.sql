@@ -15,6 +15,7 @@ id_venda int primary key IDENTITY(1,1),
 id_cliente int not null,
 id_item_vendido int not null,
 data date,
+cancelada char(1),
 desconto decimal(2,2)
 
 --constraint fk_clientes foreign key (id_cliente) references tb_clientes(id_ciente)
@@ -55,7 +56,8 @@ GO
 
 create table tb_vendas_canceladas(
 id_vendas_canceladas int primary key IDENTITY(1,1),
-id_item_vendido int UNIQUE not null
+id_item_vendido int UNIQUE not null,
+id_venda int
 
 --UNIQUE faz com que não seja possível remover 2x o mesmo item da tabela.
 --Se remover uma vez, não tem como 'remover' de novo.
@@ -153,11 +155,15 @@ insert into tb_vendas(id_cliente, id_item_vendido)values(
 2,2
 );
 
+UPDATE tb_vendas
+SET cancelada = 's'
+WHERE id_venda = 2;
 
 select * from tb_clientes
 select * from tb_vendas
 select * from tb_produtos
 select * from tb_itens_vendidos
+select * from tb_vendas_canceladas
 --================================3 EXERCICIOS DE TLBD3===================================================
 
 --Seleciona o ID da venda e o nome do cliente (que fez aquela venda) e mostra ambos
@@ -184,6 +190,27 @@ WHERE tbiv.id_item_vendido is NULL
 --2,1
 --)
 
+
+
 select * from tb_clientes
 select * from tb_vendas
 select * from tb_produtos
+go
+
+--trigger que confere se o campo 'cancelada' (tabela vendas) sofreu update. Se sim, cria uma cópia dos dados
+--para a tabela vendas canceladas
+create trigger tg_insert_vendas_canceladas on tb_vendas
+for update
+as
+	declare @itemvendidoid int;
+	declare @vendaid int;
+	declare @cancelada char(1);
+	
+	
+	select @itemvendidoid = i.id_item_vendido from inserted i;
+	select @cancelada = i.cancelada from inserted i;
+	select @vendaid = i.id_venda from inserted i;
+	
+	if (@cancelada is not null)
+	insert into tb_vendas_canceladas(id_item_vendido, id_venda) values(@itemvendidoid, @vendaid);
+go
