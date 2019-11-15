@@ -197,20 +197,69 @@ select * from tb_vendas
 select * from tb_produtos
 go
 
+--==============CAMPO ATIVIDADE DE TRIGGER=====================================================================
+
 --trigger que confere se o campo 'cancelada' (tabela vendas) sofreu update. Se sim, cria uma cópia dos dados
 --para a tabela vendas canceladas
-create trigger tg_insert_vendas_canceladas on tb_vendas
-for update
+
+--create trigger tg_insert_vendas_canceladas on tb_vendas
+--for update
+--as
+--	declare @itemvendidoid int;
+--	declare @vendaid int;
+--	declare @cancelada char(1);
+		
+--	select @itemvendidoid = i.id_item_vendido from inserted i;
+--	select @cancelada = i.cancelada from inserted i;
+--	select @vendaid = i.id_venda from inserted i;
+	
+--	if (@cancelada is not null)
+--	insert into tb_vendas_canceladas(id_item_vendido, id_venda) values(@itemvendidoid, @vendaid);
+--go
+
+--==============CAMPO ATIVIDADE DE PROCEDURE=====================================================================
+create procedure mostra_tabelas
+	as
+		print 'Tabela de clientes:';
+		select * from tb_clientes
+		print 'Tabela de vendas:';
+		select * from tb_vendas
+		print 'Tabela de produtos:';
+		select * from tb_produtos
+go
+
+exec mostra_tabelas
+drop procedure mostra_tabelas
+go
+
+--Criando Procedure de desconto:
+create procedure aplica_desconto_no_preco(
+--"p" de parametro
+	@p_preco as decimal(10, 2),
+	@p_percentual_desconto as decimal(10, 2) = 0.0,
+	@p_preco_com_desconto as decimal(10, 2) output,
+	@p_nome_cliente as varchar(30) output
+)
 as
-	declare @itemvendidoid int;
-	declare @vendaid int;
-	declare @cancelada char(1);
-	
-	
-	select @itemvendidoid = i.id_item_vendido from inserted i;
-	select @cancelada = i.cancelada from inserted i;
-	select @vendaid = i.id_venda from inserted i;
-	
-	if (@cancelada is not null)
-	insert into tb_vendas_canceladas(id_item_vendido, id_venda) values(@itemvendidoid, @vendaid);
+	begin
+		select @p_preco_com_desconto = @p_preco - (@p_preco * @p_percentual_desconto)
+		select @p_preco_com_desconto as "Preco com desconto"
+	end
+go
+
+declare @NomeCliente varchar(30);
+declare @Preco decimal(5,2);
+declare @PercentualDeDesconto decimal(5,2);
+declare @PrecoComDesconto decimal(5,2);
+set @NomeCliente = 'Fábio';
+set @Preco =100;
+set @PercentualDeDesconto = 0.5;
+
+exec aplica_desconto_no_preco @Preco, @PercentualDeDesconto, @PrecoComDesconto output, @NomeCliente output
+--print 'resultado da procedure:'
+--print 'valor atribuido para @precoComDesconto'
+select @PrecoComDesconto as "Valor da variavel: @PrecoComDesconto"
+select @NomeCliente as "Nome do cliente onde o desconto foi aplicado:"
+
+drop procedure aplica_desconto_no_preco
 go
