@@ -458,3 +458,101 @@ FROM Production.Product
 
 SELECT TOP 10 UnitPrice AS "Preço unitário"
 FROM Sales.SalesOrderDetail
+
+--==========================================================================================
+
+--AULA 16:
+--Tipos de JOIN:
+--INNER JOIN, OUTER JOIN, SELF-JOIN
+--INNER JOIN -> usado pra pegar informações contidas em outras tabelas
+
+--Lida com conceito de PK e FK. Usado quando queremos ver o endereço de um cliente,
+--onde CLIENTE é uma tabela e ENDEREÇO é outra, e CLIENTE tem como atributo a FK EnderecoID
+
+--  ___________
+-- |  Cliente |
+-- |----------|
+-- | ClienteID|
+-- |   Nome   |
+-- |EnderecoID|
+-- ------------
+
+--  ___________
+-- | Endereco |
+-- |----------|
+-- |EnderecoID|
+-- |    Rua   |
+-- |  Cidade  |
+-- ------------
+
+--SELECT C.ClienteID, C.Nome, E.Rua, E.Cidade
+--FROM Cliente C
+--INNER JOIN Endereco E ON E.EnderecoID = C.EnderecoID
+
+--Exemplo de saída:
+-- 2 | Ricardo | Rua de Exemplo | São Paulo
+
+
+--Outro exemplo:
+--Necessário pegar as informaçõesBusinessEntityId, firstName, lastName e emailAddress
+
+SELECT TOP 10 *
+FROM Person.Person
+
+SELECT TOP 10 *
+FROM Person.EmailAddress
+
+SELECT TOP 10 *
+FROM Person.BusinessEntity
+
+SELECT p.BusinessEntityID, p.FirstName, p.LastName, pe.EmailAddress
+FROM Person.Person as p
+INNER JOIN Person.EmailAddress pe ON p.BusinessEntityID = pe.BusinessEntityID
+
+--Dica: é sempre bom usar apelidos, pois isso evita
+--conflitos onde as colunas tem nomes iguais
+
+--Outro exemplo:
+--Buscar os nomes dos produtos, preços e as informações de suas subcategorias
+
+SELECT *
+FROM Production.Product
+
+SELECT *
+FROM Production.ProductSubcategory
+
+SELECT TOP 10
+	p.Name AS "Nome",
+	ps.Name AS "Sub categoria",
+	p.ListPrice AS "Preço"
+FROM Production.Product as p
+INNER JOIN Production.ProductSubcategory ps ON p.ProductSubcategoryID = ps.ProductSubcategoryID
+
+--Juntando colunas de tabelas diferentes:
+--Usado quando não especificamos as colunas, colocando-se assim um *
+--Nesse caso, os dois comandos abaixo:
+
+SELECT TOP 10 *
+FROM Person.BusinessEntityAddress
+
+SELECT TOP 10 *
+FROM Person.Address
+
+--Podem ser substituídos por:
+SELECT TOP 10 *
+FROM Person.BusinessEntityAddress pba
+INNER JOIN Person.Address pa ON pa.AddressID = pba.AddressID
+
+--Desafio 1
+--Capturar o businessEntityID, Name, PhoneNumberTypeID, PhoneNumber dos comandos abaixo:
+SELECT TOP 10 *
+FROM Person.PhoneNumberType
+
+SELECT TOP 10 *
+FROM Person.PersonPhone
+
+--Resposta:
+SELECT TOP 10
+pp.BusinessEntityID, pt.Name, pp.PhoneNumber, pp.PhoneNumberTypeID
+FROM Person.PersonPhone pp
+INNER JOIN Person.PhoneNumberType AS pt ON pt.PhoneNumberTypeID = pp.PhoneNumberTypeID
