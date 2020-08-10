@@ -358,3 +358,103 @@ SELECT ProductID, COUNT(ProductID) AS "Contagem",
 AVG(OrderQty) AS "Quantidade média"
 FROM Production.WorkOrder
 GROUP BY ProductID
+
+--==========================================================================================
+
+--AULA 14:
+--HAVING -> usado junto com GROUP BY pra filtrar resultados de um agrupamento.
+--Funciona como um WHERE para dados agrupados.
+
+--Sintaxe:
+--SELECT coluna1, funcaoAgregacao(coluna2)
+--FROM nomeTabela
+--GROUP BY coluna1
+--HAVING condicao
+
+--Diferença entre HAVING e WHERE:
+--HAVING -> aplicado depois dos dados serem agrupados
+--WHERE -> aplicado antes dos dados serem agrupados
+
+
+--Exemplo:
+--Saber quais nomes no sistema tem uma ocorrência maior que 10.
+
+SELECT firstName, COUNT(firstName) AS "Ocorrências"
+FROM Person.Person
+GROUP BY firstName
+HAVING COUNT(firstName) > 10
+
+--Outro exemplo:
+--Saber quais produtos cujo os totais de vendas estão entre 162k a 500k
+
+SELECT *
+FROM Sales.SalesOrderDetail
+
+SELECT ProductID, SUM(LineTotal) AS "Total de vendas"
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING SUM(LineTotal) BETWEEN 162000 AND 500000
+
+--Outro exemplo:
+--Saber quais nomes no sistema tem ocorrência maior que 10,
+--somente onde o título é 'Mr.'
+
+SELECT firstName, COUNT(firstName) AS "Ocorrências"
+FROM Person.Person
+WHERE Title = 'Mr.'
+GROUP BY firstName
+HAVING COUNT(firstName) > 10
+
+--Desafio 1
+--Queremos identificar as provincias(stateProvinceId) com o maior
+--número de cadastros no sistema. Assim, precisamos encontrar
+--quais provícias estão registradas no BD mais que 1000 vezes.
+
+SELECT *
+FROM Person.Address
+
+SELECT StateProvinceID, COUNT(StateProvinceID) AS "Quantidade"
+FROM Person.Address
+GROUP BY StateProvinceID
+HAVING COUNT(StateProvinceID) > 1000
+
+--Desafio 2
+--Numa multinacional os gerentes querem saber quais produtos
+--não estão trazendo em média no mínimo 1 milhão em total de vendas (lineTotal)
+
+SELECT ProductID, AVG(lineTotal) as "Total"
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING AVG(lineTotal) < 1000000
+
+--==========================================================================================
+
+--AULA 15:
+-- AS -> serve p/ renomear colunas, selects, agregações...
+
+SELECT TOP 10 listPrice AS Preço
+FROM Production.Product
+
+SELECT TOP 10 listPrice AS "Preço do produto" --obrigatório usar aspas se não for uma única palavra
+FROM Production.Product
+
+SELECT TOP 10 AVG(ListPrice) AS "Preço médio"
+FROM Production.Product
+
+--Desafio 1
+--Encontrar o firstName e lastname Person.Person e trazê-las de forma traduzida.
+
+SELECT TOP 10 firstName AS Nome, lastName AS Sobrenome
+FROM Person.Person
+
+--Desafio 2
+--Traduzir ProductNumber da tabela Production.Product para "Número do produto".
+
+SELECT TOP 10 ProductNumber AS "Número do produto"
+FROM Production.Product
+
+--Desafio 3
+--Traduzir unitPrice de sales.SalesOrderDetail para "Preço unitário".
+
+SELECT TOP 10 UnitPrice AS "Preço unitário"
+FROM Sales.SalesOrderDetail
