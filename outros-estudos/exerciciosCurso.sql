@@ -232,3 +232,129 @@ ListPrice BETWEEN 500 AND 1000
 SELECT COUNT (*)
 FROM Production.Product
 WHERE Name LIKE '%road%'
+
+--==========================================================================================
+
+--AULA 12:
+
+--MIN, MAX, SUM, AVG
+--Funções de agregação; agregam ou combinam dados de uma tabela num
+--só resultado.
+
+--Exemplo: SUM vai somar todas as colunas e retornará um único resultado.
+
+--No caso do código abaixo, irá somar todas os resultados da coluna LineTotal
+
+SELECT TOP 10 SUM(LineTotal) AS "somatoria"
+FROM Sales.SalesOrderDetail
+
+--AS "somatoria" significa que está dando um apelido pra coluna que será apresentada.
+
+SELECT *
+FROM Sales.SalesOrderDetail
+
+--retornando menor valor da coluna LineTotal
+SELECT MIN(LineTotal)
+FROM Sales.SalesOrderDetail
+
+--retornando maior valor da coluna LineTotal
+SELECT MAX(LineTotal)
+FROM Sales.SalesOrderDetail
+
+--AVG(average) = média
+--retornando a média de valores da coluna LineTotal
+SELECT AVG(LineTotal)
+FROM Sales.SalesOrderDetail
+
+--==========================================================================================
+
+--AULA 13:
+--GROUP BY -> divide o resultado da pesquisa em grupos.
+--Pra cada grupo você pode aplicar uma função de agregação, exemplo:
+-- 1. Calcular a soma de itens
+-- 2. Contar o número de itens naquele grupo
+
+--Sintaxe:
+--SELECT coluna1, funcaoAgregacao(coluna2)
+--FROM nomeTabela
+--GROUP BY coluna1
+
+--Exemplo:
+SELECT SpecialOfferID, SUM(UnitPrice) AS "Soma"
+FROM Sales.SalesOrderDetail
+GROUP BY SpecialOfferID
+
+--
+--SpecialOfferID | Soma
+--		9		 | 14328,717 <- somatória de tudo que contém SpecialOfferID = 9
+--		..		 | ..
+
+--Outro exemplo:
+--Quero saber quantos de cada produto foram vendidos até hoje
+
+SELECT ProductID, COUNT(ProductID) AS "Quantidade vendida"
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+
+--Basicamente o código acima está contando quantas vezes cada ProductID
+--está aparecendo no banco de dados.
+
+--ProductID | Quantidade vendida
+--	707		| 3083 <- 3083 dos produtos com ID 707 foram vendidos
+--	..		| ..
+
+--Outro exemplo:
+--Quero saber quantos nomes de cada nome estão cadastrados no banco de dados
+
+SELECT firstName, COUNT(firstName) AS "Total de nomes"
+FROM Person.Person
+GROUP BY firstName
+
+--Outro exemplo:
+--Saber a média de preço pros produtos de prata(silver) da tabela Production.Product
+
+SELECT *
+FROM Production.Product
+
+SELECT Color, AVG(ListPrice) AS "Média de preço"
+FROM Production.Product
+WHERE Color = 'Silver'
+GROUP BY Color
+
+--Desafio 1
+--Saber quantas pessoas tem o mesmo MiddleName, agrupadas por MiddleName
+SELECT middleName, COUNT(MiddleName) AS "Quantidade"
+FROM Person.Person
+GROUP BY middleName
+
+--Desafio 2
+--Saber em média a quantidade que cada produto é vendido na loja
+
+SELECT *
+FROM Sales.SalesOrderDetail
+
+SELECT ProductID, AVG(OrderQty) AS "Quantidade média"
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+
+--Desafio 3
+--Saber quais foram as 10 vendas que no total tiveram os maiores
+--valores de venda (lineTotal) por produto do maior valor para o menor
+
+SELECT TOP 10 ProductID, SUM(lineTotal) AS "Valor"
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+ORDER BY SUM(lineTotal) DESC
+
+--Desafio 4
+--Saber quantos produtos e qual quantidade média de produtos
+--temos cadastrados na ordem de serviço (workOrder), agrupados
+--por productID
+
+SELECT *
+FROM Production.WorkOrder
+
+SELECT ProductID, COUNT(ProductID) AS "Contagem",
+AVG(OrderQty) AS "Quantidade média"
+FROM Production.WorkOrder
+GROUP BY ProductID
