@@ -556,3 +556,96 @@ SELECT TOP 10
 pp.BusinessEntityID, pt.Name, pp.PhoneNumber, pp.PhoneNumberTypeID
 FROM Person.PersonPhone pp
 INNER JOIN Person.PhoneNumberType AS pt ON pt.PhoneNumberTypeID = pp.PhoneNumberTypeID
+
+--Desafio 2
+--Buscar as seguintes informações: AddressId, City, StateProvinceId, Nome do estado
+
+SELECT *
+FROM Person.Address
+
+SELECT *
+FROM Person.StateProvince
+
+SELECT TOP 10
+pad.AddressID AS "ID do endereço",
+pad.City AS "Cidade",
+pad.StateProvinceID AS "ID da província",
+psp.Name AS "Nome do estado"
+FROM Person.Address pad
+INNER JOIN Person.StateProvince psp ON psp.StateProvinceID = pad.StateProvinceID
+
+--==========================================================================================
+
+--AULA 18 (a 17 foi explicando os tipos de JOINS):
+--LEFT OUTER JOIN -> normalmente é abreviado como LEFT JOIN
+
+--Descobrir quais pessoas tem um cartão de crédito registrado
+
+SELECT *
+FROM Person.Person pp
+INNER JOIN Sales.PersonCreditCard pc
+ON pc.BusinessEntityID = pp.BusinessEntityID
+
+--Problema: com inner join temos 19118 resultados
+
+SELECT *
+FROM Person.Person pp
+LEFT OUTER JOIN Sales.PersonCreditCard pc
+ON pc.BusinessEntityID = pp.BusinessEntityID
+
+--Com left join temos 19972 resultados (significa que algumas pessoas não estão com o cartão registrado)
+--Left join incluirá até os resultados que não estão na tabela B (PersonCreditCard)
+
+SELECT 19972 - 19118 --saída: 854 (total de pessoas sem cartão de crédito registrado)
+
+--Exibindo os 854 resultados:
+SELECT *
+FROM Person.Person pp
+LEFT OUTER JOIN Sales.PersonCreditCard pc
+ON pc.BusinessEntityID = pp.BusinessEntityID
+WHERE pc.BusinessEntityID IS NULL
+--Isso mostra quais pessoas não tem cartão de crédito e, portanto, não podem fazer compras por exemplo.
+
+--==========================================================================================
+
+--AULA 19:
+--UNION -> ajuda a combinar 2 ou mais resultados de um SELECT num único resultado.
+
+--Estrutura:
+--SELECT coluna1, coluna2
+--FROM tabela1
+--UNION
+--SELECT coluna1, coluna2
+--FROM tabela2
+
+--Detalhe: UNION remove dados duplicados, a não ser que seja usado UNION ALL
+
+--Comando abaixo retorna 5 resultados
+SELECT [ProductID], [Name], [ProductNumber]
+FROM Production.Product
+WHERE Name LIKE '%chain%'
+
+--Comando abaixo retorna 2 resultados
+SELECT [ProductID], [Name], [ProductNumber]
+FROM Production.Product
+WHERE Name LIKE '%Decal%'
+
+--Comando abaixo retorna 7 resultados (tanto os resultados do comando 1 quanto comando 2.
+SELECT [ProductID], [Name], [ProductNumber]
+FROM Production.Product
+WHERE Name LIKE '%chain%'
+	UNION
+SELECT [ProductID], [Name], [ProductNumber]
+FROM Production.Product
+WHERE Name LIKE '%Decal%'
+
+--Podemos usar ORDER BY com o UNION, adicionando na última linha o comando a seguir por exemplo: ORDER BY Name ASC
+
+--Desafio: aplicar o conceito do UNION em qualquer tabela do banco de dados.
+SELECT FirstName, LastName, EmailPromotion
+FROM Person.Person
+WHERE EmailPromotion = 0
+	UNION
+SELECT FirstName, LastName, EmailPromotion
+FROM Person.Person
+WHERE MiddleName IS NULL
