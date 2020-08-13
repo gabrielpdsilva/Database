@@ -649,3 +649,182 @@ WHERE EmailPromotion = 0
 SELECT FirstName, LastName, EmailPromotion
 FROM Person.Person
 WHERE MiddleName IS NULL
+
+--==========================================================================================
+
+--AULA 20:
+--DATEPART -> usado para lidar com datas
+
+--No caso do comando abaixo, além do ID estamos capturando o mês da coluna OrderDate
+SELECT SalesOrderId, DATEPART(month, OrderDate) AS "Mes"
+FROM Sales.SalesOrderHeader
+
+--Além de month, podemos usar day, year...
+
+--Capturando média de valor que está a dever por mês
+SELECT AVG(TotalDue) As Media, DATEPART(month, OrderDate) AS Mes
+FROM Sales.SalesOrderHeader
+GROUP BY DATEPART(month, OrderDate)
+ORDER BY Mes
+
+--Capturando média de valor que está a dever por dia
+SELECT AVG(TotalDue) As Media, DATEPART(day, OrderDate) AS Dia
+FROM Sales.SalesOrderHeader
+GROUP BY DATEPART(day, OrderDate)
+ORDER BY Dia
+
+--Desafio
+--Selecionar o mês e o ano usando DATEPART de qualquer tabela que use datas.
+
+--Pegando mês de nascimento apenas
+SELECT BusinessEntityID, DATEPART(month, BirthDate) AS "Mês de nascimento"
+FROM HumanResources.Employee
+
+--Pegando BusinessEntityID, nome, sobrenome e dia de nascimento do funcionário.
+SELECT
+	hre.BusinessEntityID,
+	pp.FirstName,
+	pp.LastName,
+	DATEPART(day, hre.BirthDate) AS "Dia de nascimento"
+FROM HumanResources.Employee hre
+INNER JOIN Person.Person pp ON pp.BusinessEntityID = hre.BusinessEntityID
+
+--==========================================================================================
+
+--AULA 21:
+--Manipulação de String
+
+--Concatenando valores
+SELECT CONCAT(FirstName, ' ', LastName) AS "Nome Completo"
+FROM Person.Person
+
+--firstName com letras maiúsculas, lastName com letras minúsculas
+SELECT UPPER(firstName), LOWER(lastName)
+FROM Person.Person
+
+SELECT CONCAT(UPPER(firstName), ' ', LOWER(lastName))
+FROM Person.Person
+
+--Descobrindo tamanho de uma String:
+SELECT LEN(firstName), firstName
+FROM Person.Person
+
+--Substring: usado pra extrair um pedaço de uma String
+--No exemplo abaixo, está começando do primeiro índice [1] e a partir dele
+--exibirá 3 letras. No caso de 'Catherine', será apresentado 'Cat'
+SELECT firstName, SUBSTRING(firstName, 1, 3)
+FROM Person.Person
+
+--Replace: substitui X por Y
+--Sintaxe: REPLACE(Coluna, ValorOriginal, NovoValor)
+SELECT ProductNumber, REPLACE(ProductNumber, '-', '+++')
+FROM Production.Product
+
+SELECT PhoneNumber, REPLACE(PhoneNumber, '-', ' ')
+FROM Person.PersonPhone
+
+--==========================================================================================
+
+--AULA 22:
+--Funções matemáticas
+SELECT
+	UnitPrice,
+	LineTotal,
+	UnitPrice + LineTotal AS "Soma"
+FROM Sales.SalesOrderDetail
+
+--Além do +, podemos usar -, * e /.
+
+--Pegando a média
+SELECT AVG(LineTotal)
+FROM Sales.SalesOrderDetail
+
+--Pegando soma
+SELECT SUM(LineTotal)
+FROM Sales.SalesOrderDetail
+
+--Pegando maior valor
+SELECT MAX(LineTotal)
+FROM Sales.SalesOrderDetail
+
+--Pegando menor valor
+SELECT MIN(LineTotal)
+FROM Sales.SalesOrderDetail
+
+--Arredondando valores (com precisão decimal = 2)
+SELECT LineTotal, ROUND(LineTotal, 2)
+FROM Sales.SalesOrderDetail
+
+--Pegando raíz quadrada
+SELECT SQRT(LineTotal)
+FROM Sales.SalesOrderDetail
+
+--Caso precise saber de outras funções, basta pesquisar:
+--Funções matemáticas SQL Server
+
+--==========================================================================================
+
+--AULA 23:
+--SUBQUERY (SUBSELECT) -> SELECT dentro de outro SELECT.
+
+--Montar um relatório de todos os produtos cadastrados que tem preço de venda acima da média.
+--Uma forma seria:
+
+--Pegando a média
+SELECT AVG(ListPrice)
+FROM Production.Product
+
+--Exibindo os valores acima da média
+SELECT *
+FROM Production.Product
+WHERE ListPrice > 438.66
+
+--Utilizando subquerys:
+SELECT *
+FROM Production.Product
+WHERE ListPrice > (SELECT AVG(ListPrice) FROM Production.Product)
+
+--Essa opção é melhor pois é dinâmica. No caso do primeiro exemplo, assim que
+--adicionamos/removemos valores da tabela, precisariamos manualmente atualizar
+--o valor da média.
+
+--Outro exemplo:
+--Saber o nome dos funcionários que tem cargo de 'Design Engineer'
+
+SELECT *
+FROM HumanResources.Employee
+WHERE JobTitle = 'Design Engineer'
+
+SELECT *
+FROM Person.Person
+WHERE BusinessEntityID IN (5, 6, 15)
+
+--A solução acima é ruim pois não é dinâmica. Forma ideal:
+
+SELECT FirstName
+FROM Person.Person
+WHERE BusinessEntityID IN (
+	SELECT BusinessEntityID
+	FROM HumanResources.Employee
+	WHERE JobTitle = 'Design Engineer')
+
+--Ou então usando conceito de JOINS:
+SELECT pp.FirstName, hre.JobTitle
+FROM Person.Person pp
+INNER JOIN HumanResources.Employee hre ON hre.BusinessEntityID = pp.BusinessEntityID
+AND hre.JobTitle = 'Design Engineer' --ou WHERE hre.JobTitle = 'Design Engineer'
+
+--Desafio
+--Encontrar todos os endereços que estão no estado de 'Alberta' (pode trazer todas as informações)
+SELECT *
+FROM Person.Address
+
+SELECT *
+FROM Person.StateProvince
+
+SELECT *
+FROM Person.Address
+WHERE StateProvinceID = (
+	SELECT StateProvinceID
+	FROM Person.StateProvince
+	WHERE Name = 'Alberta')
