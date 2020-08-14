@@ -828,3 +828,67 @@ WHERE StateProvinceID = (
 	SELECT StateProvinceID
 	FROM Person.StateProvince
 	WHERE Name = 'Alberta')
+
+--==========================================================================================
+
+--AULA 24:
+--Obs.: será utilizado outro banco de dados, link:
+--https://raw.githubusercontent.com/Microsoft/sql-server-samples/master/samples/databases/northwind-pubs/instnwnd.sql
+--SELF-JOIN -> agrupar/ordenar dados dentro da mesma tabela
+--Detalhe: só funciona usando um alias (apelido, "AS")
+
+--Sintaxe:
+--SELECT coluna 
+--FROM tabela a, tabela b 
+--WHERE condicao 
+
+--Capturar todos os clientes que moram na mesma região
+SELECT
+	a.ContactName,
+	a.Region,
+	b.ContactName,
+	b.Region
+FROM Customers a, Customers b
+WHERE a.Region = b.Region
+
+--Capturar nome e data de contratação dos funcionários
+--que foram contratados no mesmo ano
+
+SELECT a.FirstName, b.FirstName, DATEPART(YEAR, a.HireDate) AS "Ano"
+FROM Employees a, Employees b
+WHERE DATEPART(YEAR, a.HireDate) = DATEPART(YEAR, b.HireDate)
+
+--Desafio
+--Saber na tabela detalhe do pedido quais produtos
+--tem o mesmo percentual de desconto
+
+SELECT a.ProductID, a.Discount, b.ProductID, b.Discount
+FROM [Order Details] a, [Order Details] b
+WHERE a.Discount = b.Discount
+
+--==========================================================================================
+
+--AULA 25:
+--Tipos de dados principais
+--1. booleanos:
+-- => se inicia como nulo. Pode ser 1, 0 ou nulo. Usamos a palavra BIT para booleanos.
+
+--2. caracteres:
+-- => tamanho fixo CHAR - ocupa todo o espaço reservado, exemplo: char(50) ocupa 50, mesmo que só tenha sido preenchido 10
+-- => tamanhos variáveis VARCHAR e NVARCHAR - só usa o espaço do que foi preenchido (se definiu 50 e usou 10, ocupará só 10)
+
+--3. números:
+-- => TINYINT - só permite inteiros
+-- => SMALLINT - igual, mas com limite um pouco maior
+-- => INT - igual, mas com limite um pouco maior
+-- => BIGINT - igual, mas com limite um pouco maior
+-- => NUMERIC ou DECIMAL - são inteiros mas permitem partes fracionadas, onde pode ser especificada a precisão e escala. Exemplo: NUMERIC (5,2) 113,44
+-- => valores aproximados REAL - tem precisão aproximada de até 15 dígitos
+
+--4. temporais:
+-- => DATE - armazena data no formato aaaa/mm/dd
+-- => DATETIME - armazena data e horas no formato aa/mm/dd:hh:mm:ss
+-- => DATETIME2 - data e horas com adição de milissegundos, formato aa/mm/dd:hh:mm:sssssss
+-- => SMALLDATETIME - data e hora respeitando limite de '1900-01-01:00:00:00' até '2079-06-06:23:59:59'
+-- => TIME - horas, minutos, segundos e milissegundos respeitando limite de '00:00:00.0000000' até '23:59:59.9999999'
+-- => DATETIMEOFFSET - permite armazenar informações de data e hora incluindo fuso-horário
