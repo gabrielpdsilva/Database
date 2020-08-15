@@ -892,3 +892,69 @@ WHERE a.Discount = b.Discount
 -- => SMALLDATETIME - data e hora respeitando limite de '1900-01-01:00:00:00' até '2079-06-06:23:59:59'
 -- => TIME - horas, minutos, segundos e milissegundos respeitando limite de '00:00:00.0000000' até '23:59:59.9999999'
 -- => DATETIMEOFFSET - permite armazenar informações de data e hora incluindo fuso-horário
+
+--==========================================================================================
+
+--AULA 26:
+--Primary Keys e Foreign Keys (Chaves estrangeiras)
+--São criadas utilizando CONSTRAINTS (restrições)
+
+--Definindo PK:
+--CREATE TABLE nomeTabela(
+--	nomeColuna tipoDado PRIMARY KEY,
+--	nomeColuna tipoDado
+--)
+
+--FK:
+--São referências para linkar tabelas. Ou seja, ela conterá o ID para acessar o campo de outra tabela.
+--Tabela que contém a FK: chamada de filha ou tabela referenciadora.
+--Do mesmo modo, a tabela que é apontada é a tabela pai ou tabela referenciada.
+--É definido com uma CONSTRAINT.
+--Detalhe: uma tabela pode ter mais de uma FK.
+
+--Para um exemplo mais prático, ver a AULA 16.
+
+--==========================================================================================
+
+--AULA 27:
+--CREATE TABLE -> criar tabelas
+
+--CREATE TABLE nomeTabela(
+--	coluna, tipo, restricao, --restrição é opcional
+--	...
+--)
+
+--Principais restrições:
+--NOT NULL -> não permite nulos
+--UNIQUE -> força que todos os valores da coluna sejam diferentes
+--PRIMARY KEY -> junção do NOT NULL + UNIQUE
+--FOREIGN KEY -> identifica unicamente uma linha em outra tabela
+--CHECK -> força uma condição específica em uma coluna (exemplo: só valores maiores que 10 podem ser inseridos na coluna; mínimo de 5 caracteres, etc)
+--DEFAULT -> força um valor padrão quando nenhum valor é passado (evita valores nulos)
+
+CREATE TABLE Canal(
+	CanalID int IDENTITY(1,1) PRIMARY KEY,
+	Nome varchar(150) NOT NULL,
+	ContagemInscritos INT DEFAULT 0,
+	DataCriacao DATETIME NOT NULL
+)
+
+--Importante:
+--IDENTITY(1,1) significa que o valor começa em 1 e incrementa de 1 em 1.
+--Se colocasse IDENTITY(10,5) significaria que começa com 10 e acontece o incremento de 5 em 5.
+
+CREATE TABLE Video(
+	VideoID int IDENTITY(1,1) PRIMARY KEY,
+	Nome varchar(150) NOT NULL,
+	Visualizacoes INT DEFAULT 0,
+	Likes INT DEFAULT 0,
+	Deslikes INT DEFAULT 0,
+	Duracao INT NOT NULL, --INT pois é contada em segundos
+	CanalID INT FOREIGN KEY REFERENCES Canal(CanalID)
+)
+
+SELECT *
+FROM Canal
+
+SELECT *
+FROM Video
