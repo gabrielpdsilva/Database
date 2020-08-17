@@ -958,3 +958,123 @@ FROM Canal
 
 SELECT *
 FROM Video
+
+--==========================================================================================
+
+--AULA 28:
+--INSERT INTO
+--Inserindo valor na tabela:
+
+--INSERT INTO nomeTabela(coluna1, coluna2,...)
+--VALUES(valor1, valor2,...)
+
+--Inserindo mais de um valor na tabela:
+--INSERT INTO nomeTabela(coluna1, coluna2,...)
+--VALUES
+--(valor1, valor2,...),
+--(valor1, valor2,...),
+--(valor1, valor2,...)
+
+--Inserindo valores de outra tabela dentro de uma tabela existente.
+--INSERT INTO tabelaA(coluna1)
+--SELECT coluna2
+--FROM tabelaB 
+
+CREATE TABLE Aula(
+	Id INT IDENTITY(1,1) PRIMARY KEY,
+	Nome VARCHAR(50)
+)
+
+INSERT INTO Aula(Nome)
+VALUES('Teste')
+
+INSERT INTO Aula(Nome)
+VALUES
+('Teste1'),
+('Teste2'),
+('Teste3')
+
+SELECT * FROM Aula
+
+--Copiando dados de uma tabela e jogando para uma tabela já existente.
+--Criando rapidamente uma tabela:
+SELECT * INTO TabelaNova FROM Aula
+
+--Os valores da tabela Aula agora estão na TabelaNova
+SELECT * FROM TabelaNova
+
+--==========================================================================================
+
+--AULA 29:
+--UPDATE -> serve pra atualizar linhas do banco de dados.
+
+--UPDATE nomeTabela
+--SET	coluna1 = valor1
+--		coluna2 = valor2
+--WHERE condicao
+
+SELECT * FROM Aula
+
+UPDATE Aula
+SET Nome = 'ABC'
+--Agora todos os dados estão com Nome = ABC.
+
+UPDATE Aula
+SET Nome = 'Teste'
+WHERE id = 4
+--Agora só a linha com ID 4 foi alterada.
+
+--==========================================================================================
+
+--AULA 30:
+--DELETE
+--Funciona como o UPDATE. É necessária uma condição, ou apagará tudo.
+
+--Deletando um dos registros
+DELETE FROM Aula
+WHERE Nome = 'Teste'
+
+--Deletando todos os registros
+DELETE FROM Aula
+
+--==========================================================================================
+
+--AULA 31:
+--ALTER TABLE -> alterar estrutura de uma tabela.
+
+--Sintaxe:
+--ALTER TABLE nomeDaTabela
+--ACAO
+
+--Algumas ações:
+--Adicionar, remover, alterar colunas
+--Setar valores padrão para uma coluna
+--Adicionar ou remover restrições de colunas
+--Renomear uma tabela
+
+--Adicionando coluna para IDADE
+ALTER TABLE Aula
+ADD Idade INT
+
+--Alterando limite de caracteres e adicionando restrição NOT NULL
+ALTER TABLE Aula
+ALTER COLUMN Nome VARCHAR(30) NOT NULL
+
+--Pra alterar nome de coluna, necessária a sintaxe:
+--EXEC sp_RENAME 'NomeTabela.NomeColunaAtual', 'NomeColunaNova', 'COLUMN'
+
+--Alterando nome de coluna
+EXEC sp_RENAME 'Aula.Idade', 'NovaIdade', 'COLUMN'
+
+--Pra alterar o nome da tabela, o processo é semelhante:
+--EXEC sp_RENAME 'NomeTabela', 'NovoNome'
+EXEC sp_RENAME 'Aula', 'AulaTeste'
+
+--Não funciona
+SELECT * FROM Aula
+
+--Funciona
+SELECT * FROM AulaTeste
+
+INSERT INTO AulaTeste(Nome)
+VALUES('Um'), ('Dois')
