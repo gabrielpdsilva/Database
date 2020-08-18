@@ -1078,3 +1078,54 @@ SELECT * FROM AulaTeste
 
 INSERT INTO AulaTeste(Nome)
 VALUES('Um'), ('Dois')
+
+--==========================================================================================
+
+--AULA 32:
+--DROP TABLE -> excluir tabelas
+
+--Sintaxe:
+--DROP TABLE nomeTabela 
+
+DROP TABLE AulaTeste
+
+--Importante: só podemos dropar tabelas que não referenciam outras
+--Erro:
+DROP TABLE Customers
+
+--Pra remover apenas os dados da tabela mas manter ela, é usado TRUNCATE
+
+CREATE TABLE tabelaTeste(
+	Id INT PRIMARY KEY,
+	Nome VARCHAR(10)
+)
+
+INSERT INTO tabelaTeste(Id, Nome) VALUES(0, 'Teste')
+
+TRUNCATE TABLE tabelaTeste
+
+--As informações inseridas foram deletadas, mas tabelaTeste ainda existe.
+SELECT *
+FROM tabelaTeste
+
+--==========================================================================================
+
+--AULA 33:
+--CHECK CONSTRAINT -> ajuda a aplicar restrições sobre valores, aplicado em inserção ou alteração de dado
+
+--Exemplo:
+CREATE TABLE CarteiraMotorista(
+	Id INT PRIMARY KEY,
+	Nome VARCHAR(100) NOT NULL,
+	Idade INT CHECK (Idade >= 18)
+)
+
+SELECT * FROM CarteiraMotorista
+
+--Válido:
+INSERT INTO CarteiraMotorista(Id, Nome, Idade)
+VALUES(0, 'Ana', 19)
+
+--Erro:
+INSERT INTO CarteiraMotorista(Id, Nome, Idade)
+VALUES(1, 'Mario', 13)
