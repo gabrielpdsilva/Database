@@ -1129,3 +1129,45 @@ VALUES(0, 'Ana', 19)
 --Erro:
 INSERT INTO CarteiraMotorista(Id, Nome, Idade)
 VALUES(1, 'Mario', 13)
+
+--==========================================================================================
+
+--AULA 35: (34 foi sobre NOT NULL)
+--UNIQUE -> cada registro ali será único, semelhante à PRIMARY KEY.
+--Podemos ter somente uma PK, mas várias colunas podem ser UNIQUE.
+
+CREATE TABLE Usuario(
+	Id INT IDENTITY(1,1) PRIMARY KEY,
+	Nome VARCHAR(30),
+	Cpf INT UNIQUE
+)
+
+INSERT INTO Usuario(Nome, Cpf)
+VALUES
+('Roberto', 34345645)
+--Agora não pode mais ser cadastrado um usuário com o valor especificado acima.
+
+SELECT *
+FROM Usuario
+
+--==========================================================================================
+
+--AULA 36: (última aula)
+--VIEWS -> extrair informações de uma tabela existente, sem pegar todos os dados.
+--Muito comum pra criar relatórios.
+
+--Sintaxe:
+--CREATE VIEW [nome da View] AS
+--SELECT coluna1, coluna2
+--FROM tabela
+--WHERE condicao
+
+CREATE VIEW [Pessoas] AS
+SELECT FirstName, MiddleName, LastName
+FROM Person.Person
+WHERE Title = 'Ms.'
+
+SELECT * From [Pessoas]
+
+--Dropando a VIEW
+DROP VIEW Pessoas
